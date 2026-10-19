@@ -20,6 +20,8 @@ SET created_at = COALESCE(TIMESTAMP(create_date), CURRENT_TIMESTAMP),
 
 ALTER TABLE t_task
     MODIFY COLUMN user_id BIGINT NOT NULL,
+    MODIFY COLUMN created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    MODIFY COLUMN updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     ADD INDEX idx_t_task_user_status (user_id, status),
     ADD INDEX idx_t_task_due_date (due_date),
     ADD CONSTRAINT fk_t_task_user FOREIGN KEY (user_id) REFERENCES t_user (id);

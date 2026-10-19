@@ -6,16 +6,131 @@
 
     <display-name>TaskMaster</display-name>
 
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>com.taskmaster.filter.EncodingFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>authFilter</filter-name>
+        <filter-class>com.taskmaster.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>authFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>loginServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.LoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>logoutServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.LogoutServlet</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>taskListServlet</servlet-name>
         <servlet-class>com.taskmaster.servlet.TaskListServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>taskAddServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.TaskAddServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>taskEditServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.TaskEditServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>taskUpdateServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.TaskUpdateServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>taskDeleteServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.TaskDeleteServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>taskStatusServlet</servlet-name>
+        <servlet-class>com.taskmaster.servlet.TaskStatusServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>loginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>logoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>taskListServlet</servlet-name>
         <url-pattern>/tasks</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskAddServlet</servlet-name>
+        <url-pattern>/tasks/add</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskEditServlet</servlet-name>
+        <url-pattern>/tasks/edit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskUpdateServlet</servlet-name>
+        <url-pattern>/tasks/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskDeleteServlet</servlet-name>
+        <url-pattern>/tasks/delete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>taskStatusServlet</servlet-name>
+        <url-pattern>/tasks/status</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
+
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+            <default-content-type>text/html;charset=UTF-8</default-content-type>
+        </jsp-property-group>
+    </jsp-config>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
+
+    <error-page>
+        <error-code>400</error-code>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/views/error.jsp</location>
+    </error-page>
 </web-app>
