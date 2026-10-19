@@ -1,0 +1,11 @@
+target/
+.runtime/
+.idea/
+.vscode/
+*.iml
+*.log
+.mysql/
+.env
+*.local
+src/main/resources/db.properties
+docs/screenshots/*.tmp
