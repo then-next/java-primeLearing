@@ -2,11 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="
            http://www.springframework.org/schema/beans
            https://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           https://www.springframework.org/schema/context/spring-context.xsd">
+           https://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/tx
+           https://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!-- 第三课：JDBC 连接参数外置到 jdbc.properties。 -->
     <context:property-placeholder location="classpath:jdbc.properties"/>
@@ -31,6 +34,13 @@
         <property name="basePackage" value="com.taskmaster.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
+
+    <!-- 第四课：声明式事务；Service 上的 @Transactional 由该管理器驱动。 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- 构造器注入：TaskServiceImpl 接收 TaskMapper 代理。 -->
     <bean id="taskService" class="com.taskmaster.service.impl.TaskServiceImpl">

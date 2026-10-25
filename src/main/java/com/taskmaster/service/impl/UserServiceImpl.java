@@ -4,6 +4,7 @@ import com.taskmaster.entity.User;
 import com.taskmaster.mapper.UserMapper;
 import com.taskmaster.service.UserService;
 import com.taskmaster.util.PasswordUtil;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Setter 注入示例：applicationContext.xml 通过 <property name="userMapper"> 注入依赖。
@@ -18,6 +19,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User authenticate(String username, String rawPassword) {
         User user = userMapper.selectByUsername(username);
         if (user == null || !PasswordUtil.verify(rawPassword, user.getSalt(), user.getPasswordHash())) {
