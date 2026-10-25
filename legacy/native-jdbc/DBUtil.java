@@ -1,3 +1,4 @@
+// 第一阶段原生 JDBC DBUtil 留档，不参与 MyBatis 编译。
 package com.taskmaster.util;
 
 import java.io.IOException;

@@ -1,3 +1,4 @@
+// 第一阶段原生 JDBC DAO 实现留档，不参与 MyBatis 编译。
 package com.taskmaster.dao.impl;
 
 import com.taskmaster.dao.UserDao;

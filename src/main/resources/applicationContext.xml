@@ -1,21 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           https://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           https://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           https://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- 第一课：对象创建权交给 Spring Core；本文件暂不负责 MVC。 -->
+    <!-- 第三课：JDBC 连接参数外置到 jdbc.properties。 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
 
-    <bean id="taskDao" class="com.taskmaster.dao.impl.TaskDaoImpl"/>
-    <bean id="userDao" class="com.taskmaster.dao.impl.UserDaoImpl"/>
-
-    <!-- 构造器注入：TaskServiceImpl 只接收不可变的 TaskDao 依赖。 -->
-    <bean id="taskService" class="com.taskmaster.service.impl.TaskServiceImpl">
-        <constructor-arg ref="taskDao"/>
+    <!-- MyBatis 自带 PooledDataSource，避免原 DBUtil 每次新建物理连接。 -->
+    <bean id="dataSource" class="org.apache.ibatis.datasource.pooled.PooledDataSource">
+        <property name="driver" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
     </bean>
 
-    <!-- Setter 注入：与构造器注入形成对照，便于比较两者的差异。 -->
+    <!-- MyBatis 配置与 Mapper XML；环境由 Spring 的 DataSource 提供。 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:mappers/*.xml"/>
+    </bean>
+
+    <!-- Mapper 接口没有实现类；这里扫描并生成 JDK 动态代理 Bean。 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.taskmaster.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <!-- 构造器注入：TaskServiceImpl 接收 TaskMapper 代理。 -->
+    <bean id="taskService" class="com.taskmaster.service.impl.TaskServiceImpl">
+        <constructor-arg ref="taskMapper"/>
+    </bean>
+
+    <!-- Setter 注入：UserServiceImpl 接收 UserMapper 代理。 -->
     <bean id="userService" class="com.taskmaster.service.impl.UserServiceImpl">
-        <property name="userDao" ref="userDao"/>
+        <property name="userMapper" ref="userMapper"/>
     </bean>
 </beans>

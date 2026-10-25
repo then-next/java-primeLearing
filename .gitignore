@@ -1,5 +1,6 @@
 target/
 .runtime/
+.tools/
 .idea/
 .vscode/
 *.iml
@@ -8,4 +9,5 @@ target/
 .env
 *.local
 src/main/resources/db.properties
+src/main/resources/jdbc.properties
 docs/screenshots/*.tmp
