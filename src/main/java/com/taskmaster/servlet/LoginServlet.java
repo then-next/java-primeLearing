@@ -1,9 +1,7 @@
 package com.taskmaster.servlet;
 
-import com.taskmaster.dao.UserDao;
-import com.taskmaster.dao.impl.UserDaoImpl;
 import com.taskmaster.entity.User;
-import com.taskmaster.util.PasswordUtil;
+import com.taskmaster.service.UserService;
 import com.taskmaster.util.WebUtil;
 
 import javax.servlet.ServletException;
@@ -11,12 +9,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class LoginServlet extends BaseServlet {
     private static final long serialVersionUID = 1L;
 
-    private final UserDao userDao = new UserDaoImpl();
+    private UserService userService;
+
+    @Override
+    public void init() throws ServletException {
+        userService = springBean("userService", UserService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -49,14 +51,8 @@ public class LoginServlet extends BaseServlet {
             return;
         }
 
-        User user;
-        try {
-            user = userDao.findByUsername(username);
-        } catch (SQLException e) {
-            throw new ServletException("登录查询失败，请检查数据库连接", e);
-        }
-
-        if (user == null || !PasswordUtil.verify(password, user.getSalt(), user.getPasswordHash())) {
+        User user = userService.authenticate(username, password);
+        if (user == null) {
             request.setAttribute("error", "用户名或密码不正确");
             request.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(request, response);
             return;
@@ -64,8 +60,6 @@ public class LoginServlet extends BaseServlet {
 
         HttpSession session = request.getSession();
         request.changeSessionId();
-        user.setPasswordHash(null);
-        user.setSalt(null);
         session.setAttribute(WebUtil.SESSION_USER, user);
         WebUtil.rotateCsrfToken(session);
         redirect(request, response, "/tasks");

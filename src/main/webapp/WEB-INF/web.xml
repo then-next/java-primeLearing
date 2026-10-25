@@ -6,6 +6,10 @@
 
     <display-name>TaskMaster</display-name>
 
+    <listener>
+        <listener-class>com.taskmaster.listener.SpringContextListener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>com.taskmaster.filter.EncodingFilter</filter-class>

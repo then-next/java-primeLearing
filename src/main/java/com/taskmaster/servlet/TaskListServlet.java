@@ -1,16 +1,14 @@
 package com.taskmaster.servlet;
 
-import com.taskmaster.dao.TaskDao;
-import com.taskmaster.dao.impl.TaskDaoImpl;
 import com.taskmaster.entity.Task;
 import com.taskmaster.entity.User;
+import com.taskmaster.service.TaskService;
 import com.taskmaster.util.WebUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -20,7 +18,12 @@ import java.util.List;
 public class TaskListServlet extends BaseServlet {
     private static final long serialVersionUID = 1L;
 
-    private final TaskDao taskDao = new TaskDaoImpl();
+    private TaskService taskService;
+
+    @Override
+    public void init() throws ServletException {
+        taskService = springBean("taskService", TaskService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,17 +39,13 @@ public class TaskListServlet extends BaseServlet {
             status = Integer.valueOf(rawStatus);
         }
 
-        try {
-            List<Task> tasks = taskDao.list(user.getId(), keyword, status);
-            request.setAttribute("tasks", tasks);
-            request.setAttribute("totalCount", taskDao.count(user.getId(), null));
-            request.setAttribute("todoCount", taskDao.count(user.getId(), 0));
-            request.setAttribute("doingCount", taskDao.count(user.getId(), 1));
-            request.setAttribute("doneCount", taskDao.count(user.getId(), 2));
-            request.setAttribute("overdueCount", taskDao.countOverdue(user.getId()));
-        } catch (SQLException e) {
-            throw new ServletException("任务列表查询失败", e);
-        }
+        List<Task> tasks = taskService.list(user.getId(), keyword, status);
+        request.setAttribute("tasks", tasks);
+        request.setAttribute("totalCount", taskService.count(user.getId(), null));
+        request.setAttribute("todoCount", taskService.count(user.getId(), 0));
+        request.setAttribute("doingCount", taskService.count(user.getId(), 1));
+        request.setAttribute("doneCount", taskService.count(user.getId(), 2));
+        request.setAttribute("overdueCount", taskService.countOverdue(user.getId()));
 
         request.setAttribute("keyword", keyword == null ? "" : keyword);
         request.setAttribute("statusFilter", status);

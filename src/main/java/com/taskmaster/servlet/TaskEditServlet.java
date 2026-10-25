@@ -1,21 +1,24 @@
 package com.taskmaster.servlet;
 
-import com.taskmaster.dao.TaskDao;
-import com.taskmaster.dao.impl.TaskDaoImpl;
 import com.taskmaster.entity.Task;
 import com.taskmaster.entity.User;
+import com.taskmaster.service.TaskService;
 import com.taskmaster.util.WebUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class TaskEditServlet extends BaseServlet {
     private static final long serialVersionUID = 1L;
 
-    private final TaskDao taskDao = new TaskDaoImpl();
+    private TaskService taskService;
+
+    @Override
+    public void init() throws ServletException {
+        taskService = springBean("taskService", TaskService.class);
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -26,17 +29,13 @@ public class TaskEditServlet extends BaseServlet {
             return;
         }
         User user = currentUser(request);
-        try {
-            Task task = taskDao.findById(id, user.getId());
-            if (task == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "任务不存在");
-                return;
-            }
-            request.setAttribute("task", task);
-            request.setAttribute("formMode", "edit");
-            request.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(request, response);
-        } catch (SQLException e) {
-            throw new ServletException("读取任务失败", e);
+        Task task = taskService.findById(id, user.getId());
+        if (task == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "任务不存在");
+            return;
         }
+        request.setAttribute("task", task);
+        request.setAttribute("formMode", "edit");
+        request.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(request, response);
     }
 }

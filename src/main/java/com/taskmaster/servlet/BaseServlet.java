@@ -1,7 +1,9 @@
 package com.taskmaster.servlet;
 
 import com.taskmaster.entity.User;
+import com.taskmaster.listener.SpringContextListener;
 import com.taskmaster.util.WebUtil;
+import org.springframework.context.ApplicationContext;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,5 +34,14 @@ public abstract class BaseServlet extends HttpServlet {
     protected void redirect(HttpServletRequest request, HttpServletResponse response, String path)
             throws IOException {
         response.sendRedirect(request.getContextPath() + path);
+    }
+
+    protected ApplicationContext springContext() {
+        return (ApplicationContext) getServletContext()
+                .getAttribute(SpringContextListener.CONTEXT_ATTRIBUTE);
+    }
+
+    protected <T> T springBean(String beanName, Class<T> type) {
+        return springContext().getBean(beanName, type);
     }
 }

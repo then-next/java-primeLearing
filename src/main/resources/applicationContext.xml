@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 第一课：对象创建权交给 Spring Core；本文件暂不负责 MVC。 -->
+
+    <bean id="taskDao" class="com.taskmaster.dao.impl.TaskDaoImpl"/>
+    <bean id="userDao" class="com.taskmaster.dao.impl.UserDaoImpl"/>
+
+    <!-- 构造器注入：TaskServiceImpl 只接收不可变的 TaskDao 依赖。 -->
+    <bean id="taskService" class="com.taskmaster.service.impl.TaskServiceImpl">
+        <constructor-arg ref="taskDao"/>
+    </bean>
+
+    <!-- Setter 注入：与构造器注入形成对照，便于比较两者的差异。 -->
+    <bean id="userService" class="com.taskmaster.service.impl.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+</beans>
