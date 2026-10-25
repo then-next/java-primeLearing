@@ -1,11 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" isErrorPage="true" %>
 <%@ page import="com.taskmaster.util.WebUtil" %>
 <%
-    Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+    Integer statusCode = (Integer) request.getAttribute("statusCode");
+    if (statusCode == null) {
+        statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
+    }
     if (statusCode == null) {
         statusCode = (Integer) request.getAttribute("jakarta.servlet.error.status_code");
     }
-    String message = (String) request.getAttribute("javax.servlet.error.message");
+    String message = (String) request.getAttribute("message");
+    if (message == null) {
+        message = (String) request.getAttribute("javax.servlet.error.message");
+    }
     if (message == null) {
         message = (String) request.getAttribute("jakarta.servlet.error.message");
     }

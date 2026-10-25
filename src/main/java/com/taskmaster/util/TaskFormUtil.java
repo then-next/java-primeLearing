@@ -2,7 +2,7 @@ package com.taskmaster.util;
 
 import com.taskmaster.entity.Task;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;

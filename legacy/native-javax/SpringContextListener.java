@@ -1,3 +1,4 @@
+// 第一阶段 Spring Core Listener 留档，不参与 SSM Web 编译。
 package com.taskmaster.listener;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;

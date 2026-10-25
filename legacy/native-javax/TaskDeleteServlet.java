@@ -1,6 +1,6 @@
+// 第一阶段原生 javax Servlet 留档，不参与 SSM 编译。
 package com.taskmaster.servlet;
 
-import com.taskmaster.entity.Task;
 import com.taskmaster.entity.User;
 import com.taskmaster.service.TaskService;
 import com.taskmaster.util.WebUtil;
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class TaskEditServlet extends BaseServlet {
+public class TaskDeleteServlet extends BaseServlet {
     private static final long serialVersionUID = 1L;
 
     private TaskService taskService;
@@ -21,21 +21,22 @@ public class TaskEditServlet extends BaseServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        if (!requireCsrf(request, response)) {
+            return;
+        }
         Long id = WebUtil.parseLong(request.getParameter("id"));
         if (id == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "任务 ID 不合法");
             return;
         }
         User user = currentUser(request);
-        Task task = taskService.findById(id, user.getId());
-        if (task == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "任务不存在");
+        if (!taskService.delete(id, user.getId())) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "任务不存在或无权删除");
             return;
         }
-        request.setAttribute("task", task);
-        request.setAttribute("formMode", "edit");
-        request.getRequestDispatcher("/WEB-INF/views/edit.jsp").forward(request, response);
+        WebUtil.flash(request, "success", "任务已删除");
+        redirect(request, response, "/tasks");
     }
 }
